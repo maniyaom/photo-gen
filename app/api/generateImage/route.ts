@@ -26,7 +26,7 @@ async function generateImage(prompt: string) {
     try{
         const response = await client.images.generate({
             "model": "black-forest-labs/flux-dev",
-            "response_format": "url",
+            "response_format": "b64_json",
             "extra_body": {
                 "response_extension": "webp",
                 "width": 2000,
@@ -37,7 +37,7 @@ async function generateImage(prompt: string) {
             },
             "prompt": prompt
         })
-        return { success: true, imageUrl: response.data[0].url };
+        return { success: true, base64_image: response.data[0].b64_json };
     } catch (error) {
         return { success: false, message: "Failed to generate image" };
     }
