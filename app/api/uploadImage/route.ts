@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { v2 as cloudinary } from 'cloudinary';
 import { NextRequest, NextResponse } from "next/server";
 import { auth, clerkClient } from '@clerk/nextjs/server'
+import generateCaptionAndTagsFromImage from "@/utils/generateCaptionAndTags";
 
 const prisma = new PrismaClient();
 
@@ -28,6 +29,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
         return NextResponse.json({ success: false, message: "Prompt and image in base64 are required" }, { status: 400 });
     }
 
+    const captionAndTags = await generateCaptionAndTagsFromImage(image_base64);
+
+    if (!captionAndTags.success) {
+        return NextResponse.json({ success: false, message: "Failed to generate caption and tags" }, { status: 500 });
+    }
+
     const uploadResponse = await uploadToCloudinary(image_base64);
     if (!uploadResponse.success) {
         return NextResponse.json({ success: false, message: "Failed to upload image" }, { status: 500 });
@@ -35,13 +42,26 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     await prisma.image.create({
         data: {
-            userId: userId,
+            title: captionAndTags.message.title,
             filename: uploadResponse.message.display_name,
             url: uploadResponse.message.url,
             format: uploadResponse.message.format,
             prompt: prompt,
-            isPublic: true
-        }
+            isPublic: true,
+            user: {
+              connect: { userId: userId },
+            },
+            imageTags: {
+                create: captionAndTags.message.tags.map((tag: string) => ({
+                    tag: {
+                        connectOrCreate: {
+                            where: { tagName: tag },
+                            create: { tagName: tag }
+                        }
+                    }
+                }))
+            }
+          }
     });
     return NextResponse.json({ success: true, message: "Image uploaded successfully" }, { status: 200 });
 }
