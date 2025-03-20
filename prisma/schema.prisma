@@ -30,6 +30,7 @@ model Image {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
   userId    String
+  title     String
   filename  String
   url       String
   format    String
@@ -37,5 +38,25 @@ model Image {
   isPublic  Boolean  @default(true)
   createdAt DateTime @default(now())
 
+  imageTags ImageTag[]  // Relation to the join table
   @@map("images")
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  tagName   String    @unique
+  createdAt DateTime  @default(now())
+
+  imageTags ImageTag[]  // Relation to the join table
+  @@map("tags")
+}
+
+model ImageTag {
+  imageId   Int
+  tagId     Int
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([imageId, tagId])  // Composite primary key
+  @@map("image_tags")
 }
