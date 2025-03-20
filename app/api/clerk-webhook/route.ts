@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         } else if (evt.type === "session.created") {
             const { user_id, created_at } = evt.data;
             // console.log("Updating session for user with userId:", user_id);
-            // console.log(evt.data);
+            console.log(evt.data);
             const userdata = await prisma.user.findUnique({ where: { userId: user_id } });
             if (userdata){
                 await prisma.user.update({ where: { userId: user_id }, data: { lastSignedIn: new Date(created_at) } });
