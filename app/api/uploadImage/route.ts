@@ -43,9 +43,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
     await prisma.image.create({
         data: {
             title: captionAndTags.message.title,
-            filename: uploadResponse.message.display_name,
-            url: uploadResponse.message.url,
-            format: uploadResponse.message.format,
+            filename: uploadResponse.message?.display_name,
+            url: uploadResponse.message?.url ?? '',
+            format: uploadResponse.message?.format ?? '',
             prompt: prompt,
             isPublic: true,
             user: {

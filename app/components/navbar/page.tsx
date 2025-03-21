@@ -81,98 +81,85 @@
 // }
 
 "use client";
-import { useState } from 'react';
-import { Menu, X, Github, Image } from 'lucide-react';
-import { ImageIcon, MenuIcon } from "lucide-react";
+import { useState } from "react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import {
+  Moon,
+  Sun,
+  Sparkles,
+  Camera,
+  Zap,
+  Clock,
+  Crown,
+  Star,
+  Users,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
-
+import { usePathname } from "next/navigation";
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const pathname = usePathname();
+
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Generate Image", path: "/generate" },
+    { name: "Gallery", path: "/gallery" },
+    { name: "Features", path: "/#features" },
+    { name: "Showcase", path: "/#showcase" },
+    { name: "Testimonials", path: "/#testimonials" },
+  ];
 
   return (
-    <nav className="bg-white/10 backdrop-blur-lg border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Image className="w-8 h-8 text-yellow-300" />
-            <span className="ml-2 text-xl font-bold text-white">PhotoMagic AI</span>
-          </div>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href={"/generate"} className="text-gray-300 hover:text-white transition-colors">Generate</Link>
-            <Link href={"/gallery"} className="text-gray-300 hover:text-white transition-colors">Gallery</Link>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">Gallery</a>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">Styles</a>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
-            <a 
-              href="https://github.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+    <nav
+      className={`fixed w-full p-6 ${
+        isDarkMode ? "bg-gray-900/50" : "bg-white/50"
+      } backdrop-blur-lg z-50`}
+    >
+      <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          <Sparkles className="w-6 h-6 text-purple-500" />
+          <span className="text-white text-xl font-bold">PhotoAI</span>
+        </div>
+        <div className="hidden md:flex items-center space-x-8">
+        {navLinks.map((link) => (
+            <Link
+              href={link.path} key={link.path}
+              className={`hover:text-purple-500 transition-colors ${
+                pathname === link.path ? "text-purple-500" : "text-white"
+              }`}
             >
-              <Github className="w-5 h-5" />
-              GitHub
-            </a>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <Button className="cursor-pointer">Sign In</Button>
-              </SignInButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-300 hover:text-white focus:outline-none"
-            >
-              {isMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
-          </div>
+              {link.name}
+            </Link>
+        ))}
+        </div>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className={`p-2 rounded-full cursor-pointer ${
+              isDarkMode
+                ? "bg-gray-800 text-yellow-500"
+                : "bg-gray-100 text-gray-600"
+            } hover:scale-110 transition-transform`}
+          >
+            {isDarkMode ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+          </button>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg transition-colors cursor-pointer">
+                Sign In
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
       </div>
-
-      {/* Mobile Navigation */}
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white/5 backdrop-blur-lg">
-            <a href="#" className="block px-3 py-2 text-gray-300 hover:text-white transition-colors">Gallery</a>
-            <a href="#" className="block px-3 py-2 text-gray-300 hover:text-white transition-colors">Styles</a>
-            <a href="#" className="block px-3 py-2 text-gray-300 hover:text-white transition-colors">Pricing</a>
-            <a 
-              href="https://github.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="flex items-center gap-2 px-3 py-2 text-gray-300 hover:text-white transition-colors"
-            >
-              <Github className="w-5 h-5" />
-              GitHub
-            </a>
-          </div>
-        </div>
-      )}
     </nav>
   );
 }

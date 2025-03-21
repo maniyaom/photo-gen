@@ -92,27 +92,6 @@ export default function Gallery() {
     <div className={`min-h-screen transition-colors duration-300 ${
       isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
     }`}>
-      {/* Navigation */}
-      <nav className={`fixed w-full p-6 ${
-        isDarkMode ? 'bg-gray-900/50' : 'bg-white/50'
-      } backdrop-blur-lg z-50`}>
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Sparkles className="w-6 h-6 text-purple-500" />
-            <span className="text-xl font-bold">PhotoAI</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`p-2 rounded-full ${
-                isDarkMode ? 'bg-gray-800 text-yellow-500' : 'bg-gray-100 text-gray-600'
-              } hover:scale-110 transition-transform`}
-            >
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-      </nav>
 
       {/* Gallery Section */}
       <main className="container mx-auto px-4 pt-24 pb-12">
